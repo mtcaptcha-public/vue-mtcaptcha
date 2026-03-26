@@ -1,0 +1,47 @@
+{
+  "name": "vue-mtcaptcha",
+  "version": "1.0.0",
+  "description": "A Vue 3 plugin for MTCaptcha integration.",
+  "author": "MTCaptcha Public",
+  "organization": "MTcaptcha",
+  "homepage": "https://github.com/mtcaptcha-public/vue-mtcaptcha",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mtcaptcha-public/vue-mtcaptcha.git",
+    "web": "https://github.com/mtcaptcha-public/vue-mtcaptcha"
+  },
+  "bugs": {
+    "url": "https://github.com/mtcaptcha-public/vue-mtcaptcha/issues"
+  },
+  "license": "MIT",
+  "main": "dist/vue-mtcaptcha.umd.js",
+  "module": "dist/vue-mtcaptcha.es.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],  
+  "scripts": {
+    "build": "vite build && npm run build:types",
+    "build:types": "tsc -p tsconfig.types.json",
+    "dev": "vite dev",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "vue",
+    "mtcaptcha",
+    "captcha",
+    "vue-library",
+    "vue-component",
+    "security",
+    "mtcaptcha-vue"
+  ],
+  "peerDependencies": {
+    "vue": "^3.5.30"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.0"
+  }
+}
