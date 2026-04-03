@@ -94,6 +94,7 @@ export interface MTCaptchaOptions {
   verifyexpiredCallback?: (state: MTCaptchaState) => void;
   errorCallback?: (state: MTCaptchaState) => void;
   autoFormValidate?: boolean;
+  autoFadeOuterText?: boolean;
 }
 
 export type MTCaptchaPlugin = Plugin & {
@@ -247,6 +248,9 @@ const MTCaptchaPluginImpl: MTCaptchaPlugin = {
         autoFormValidate:
           options.autoFormValidate ??
           (window.mtcaptchaConfig as any)?.autoFormValidate,
+        autoFadeOuterText:
+          options.autoFadeOuterText ??
+          (window.mtcaptchaConfig as any)?.autoFadeOuterText,
       };
     }
 
@@ -327,6 +331,10 @@ export const MTCaptchaComponent = defineComponent({
       type: Boolean,
       required: false,
     },
+    autoFadeOuterText: {
+      type: Boolean,
+      required: false,
+    },
   },
   methods: {
     setEnableTestMode(testKey?: string): void {
@@ -401,6 +409,9 @@ export const MTCaptchaComponent = defineComponent({
       autoFormValidate:
         this.autoFormValidate ??
         (window.mtcaptchaConfig as any)?.autoFormValidate,
+      autoFadeOuterText:
+        this.autoFadeOuterText ??
+        (window.mtcaptchaConfig as any)?.autoFadeOuterText,
     };
   },
   render() {
