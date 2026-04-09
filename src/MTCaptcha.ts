@@ -1,7 +1,7 @@
 import { defineComponent, h, type App, type Plugin } from 'vue';
 
-declare const __MTCAPTCHA_SERVICE1_HOST__: string;
-declare const __MTCAPTCHA_SERVICE2_HOST__: string;
+const MTCAPTCHA_SERVICE1_HOST = 'service.mtcaptcha.com';
+const MTCAPTCHA_SERVICE2_HOST = 'service2.mtcaptcha.com';
 
 declare global {
   interface Window {
@@ -161,12 +161,12 @@ function injectScripts() {
 
   const s1 = document.createElement('script');
   s1.async = true;
-  s1.src = `https://${__MTCAPTCHA_SERVICE1_HOST__}/mtcv1/client/mtcaptcha.min.js`;
+  s1.src = `https://${MTCAPTCHA_SERVICE1_HOST}/mtcv1/client/mtcaptcha.min.js`;
   headOrBody.appendChild(s1);
 
   const s2 = document.createElement('script');
   s2.async = true;
-  s2.src = `https://${__MTCAPTCHA_SERVICE2_HOST__}/mtcv1/client/mtcaptcha2.min.js`;
+  s2.src = `https://${MTCAPTCHA_SERVICE2_HOST}/mtcv1/client/mtcaptcha2.min.js`;
   headOrBody.appendChild(s2);
 }
 
