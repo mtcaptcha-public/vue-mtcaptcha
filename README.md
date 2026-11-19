@@ -104,6 +104,8 @@ app.mount('#app');
 | `enableTestMode`               | `string`                                                                                                                                                | No       | `-`          | Test key from MTCaptcha Admin Console (next to PrivateKey).                                                                                   |
 | `lang`                         | `string`                                                                                                                                                | No       | `-`          | Active language code used by the widget (for example: `en`, `fr`, `ta`).                                                                      |
 | `customLangText` | `MTCaptchaCustomLangText`                                                                                                                               | No       | `-`          | Custom language text JSON.                                                                                                                    |
+| `customAccessibilityText`      | `MTCaptchaCustomAccessibilityText`                                                                                                                      | No       | `-`          | Screen-reader labels keyed by language, then by `default` or a widget state.                                                                  |
+| `customFonts`                  | `MTCaptchaCustomFonts`                                                                                                                                  | No       | `-`          | Default font family and custom font files for the widget.                                                                                     |
 | `customStyle`                  | `MTCaptchaCustomStyle`                                                                                                                                  | No       | `-`          | Custom style JSON for widget look-and-feel.                                                                                                   |
 | `theme`                        | `'basic' \| 'overcast' \| 'neowhite' \| 'goldbezel' \| 'blackmoon' \| 'darkruby' \| 'touchoforange' \| 'caribbean' \| 'woodyallen' \| 'chrome' \| 'highcontrast'` | No       | `basic`      | Widget theme preset.                                                                                                                          |
 | `challengeType`                | `'imageonly' \| 'standard'`                                                                                                                                | No       | `standard`   | Challenge mode. Use `imageonly` to force image-only challenges.                                                                               |
@@ -293,6 +295,88 @@ const customStyle = {
   loadAnimationDotColor: '#F122FF',
   loadAnimationBorderColor: '#DFFF78',
 };
+```
+
+## customAccessibilityText
+
+Accessibility text is set per language code, then under `default` or a named widget state.
+
+```ts
+interface MTCaptchaAccessibilityLabels {
+  iframeTitle?: string;
+}
+
+interface MTCaptchaAccessibilityLanguage {
+  default?: MTCaptchaAccessibilityLabels;
+  [state: string]: MTCaptchaAccessibilityLabels | undefined;
+}
+
+type MTCaptchaCustomAccessibilityText = Record<string, MTCaptchaAccessibilityLanguage>;
+```
+
+Example:
+
+```ts
+const customAccessibilityText = {
+  en: {
+    default: {
+      iframeTitle: 'Custom Security Verification Frame',
+    },
+  },
+};
+```
+
+Usage:
+
+```vue
+<MTCaptcha
+  sitekey="YOUR_SITE_KEY"
+  lang="en"
+  :custom-accessibility-text="customAccessibilityText"
+/>
+```
+
+## customFonts
+
+`defaultFontFamily` applies a font stack such as `serif`, `sans-serif`, or `Arial` across the widget. `fonts` lists files the widget can load. `format` is `woff2`, `woff`, `truetype`, or `opentype`.
+
+```ts
+type MTCaptchaFontFormat = 'woff2' | 'woff' | 'truetype' | 'opentype';
+
+interface MTCaptchaCustomFontFace {
+  family: string;
+  url: string;
+  format: MTCaptchaFontFormat;
+}
+
+interface MTCaptchaCustomFonts {
+  defaultFontFamily?: string;
+  fonts?: MTCaptchaCustomFontFace[];
+}
+```
+
+Example:
+
+```ts
+const customFonts = {
+  defaultFontFamily: 'sans-serif',
+  fonts: [
+    {
+      family: 'Inter',
+      url: 'https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@5.3.0/latin-wght-normal.woff2',
+      format: 'woff2',
+    },
+  ],
+};
+```
+
+Usage:
+
+```vue
+<MTCaptcha
+  sitekey="YOUR_SITE_KEY"
+  :custom-fonts="customFonts"
+/>
 ```
 
 ## License
