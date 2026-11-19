@@ -31,6 +31,42 @@ export interface MTCaptchaState {
 
 export type MTCaptchaCustomLangText = Record<string, Record<string, string>>;
 
+export type MTCaptchaFontFormat = 'woff2' | 'woff' | 'truetype' | 'opentype';
+
+export interface MTCaptchaCustomFontFace {
+  /** CSS font-family name, for example `Inter`. */
+  family: string;
+  /** URL of the font file. */
+  url: string;
+  /** Font file format. */
+  format: MTCaptchaFontFormat;
+}
+
+export interface MTCaptchaCustomFonts {
+  /** Font stack applied across widget elements, for example `sans-serif` or `Arial`. */
+  defaultFontFamily?: string;
+  /** Font files the widget may load. */
+  fonts?: MTCaptchaCustomFontFace[];
+}
+
+export interface MTCaptchaAccessibilityLabels {
+  /** Title announced for the captcha iframe. */
+  iframeTitle?: string;
+}
+
+export interface MTCaptchaAccessibilityLanguage {
+  /** Labels used when no more specific widget state applies. */
+  default?: MTCaptchaAccessibilityLabels;
+  /** Labels for a named widget state. */
+  [state: string]: MTCaptchaAccessibilityLabels | undefined;
+}
+
+/** Accessibility labels keyed by language code, then by `default` or a widget state. */
+export type MTCaptchaCustomAccessibilityText = Record<
+  string,
+  MTCaptchaAccessibilityLanguage
+>;
+
 export interface MTCaptchaInputBorderColor {
   byDefault?: string;
   hover?: string;
@@ -69,6 +105,8 @@ export interface MTCaptchaOptions {
   lang?: string;
   challengeType?: 'imageonly' | 'standard';
   customLangText?: MTCaptchaCustomLangText;
+  customAccessibilityText?: MTCaptchaCustomAccessibilityText;
+  customFonts?: MTCaptchaCustomFonts;
   customStyle?: MTCaptchaCustomStyle;
   theme?:
     | 'basic'
@@ -151,6 +189,27 @@ function isValidTheme(value?: string): boolean {
   ].includes(value);
 }
 
+function isValidFontFormat(value?: string): boolean {
+  if (value == null || value === '') return false;
+  return value === 'woff2' || value === 'woff' || value === 'truetype' || value === 'opentype';
+}
+
+function isValidCustomFonts(fonts?: MTCaptchaCustomFonts): boolean {
+  if (fonts == null) return true;
+  const faces = fonts.fonts;
+  if (faces == null) return true;
+  if (!Array.isArray(faces)) return false;
+  return faces.every(
+    (face) =>
+      !!face &&
+      typeof face.family === 'string' &&
+      face.family !== '' &&
+      typeof face.url === 'string' &&
+      face.url !== '' &&
+      isValidFontFormat(face.format)
+  );
+}
+
 function injectScripts() {
   if (scriptsLoaded) return;
   scriptsLoaded = true;
@@ -204,6 +263,11 @@ const MTCaptchaPluginImpl: MTCaptchaPlugin = {
         'MTCaptcha: "theme" must be one of basic, overcast, neowhite, goldbezel, blackmoon, darkruby, touchoforange, caribbean, woodyallen, chrome, highcontrast'
       );
     }
+    if (!isValidCustomFonts(options.customFonts)) {
+      throw new Error(
+        'MTCaptcha: "customFonts.fonts" entries need family, url, and format (woff2, woff, truetype, or opentype)'
+      );
+    }
 
     if (options) {
       window.mtcaptchaConfig = {
@@ -215,6 +279,11 @@ const MTCaptchaPluginImpl: MTCaptchaPlugin = {
         lang: options.lang ?? (window.mtcaptchaConfig as any)?.lang,
         customLangText:
           options.customLangText ?? (window.mtcaptchaConfig as any)?.customLangText,
+        customAccessibilityText:
+          options.customAccessibilityText ??
+          (window.mtcaptchaConfig as any)?.customAccessibilityText,
+        customFonts:
+          options.customFonts ?? (window.mtcaptchaConfig as any)?.customFonts,
         customStyle:
           options.customStyle ?? (window.mtcaptchaConfig as any)?.customStyle,
         theme: options.theme ?? (window.mtcaptchaConfig as any)?.theme ?? 'basic',
@@ -281,6 +350,15 @@ export const MTCaptchaComponent = defineComponent({
     customLangText: {
       type: Object,
       required: false,
+    },
+    customAccessibilityText: {
+      type: Object,
+      required: false,
+    },
+    customFonts: {
+      type: Object,
+      required: false,
+      validator: (value: MTCaptchaCustomFonts) => isValidCustomFonts(value),
     },
     customStyle: {
       type: Object,
@@ -374,6 +452,10 @@ export const MTCaptchaComponent = defineComponent({
       lang: this.lang ?? (window.mtcaptchaConfig as any)?.lang,
       customLangText:
         this.customLangText ?? (window.mtcaptchaConfig as any)?.customLangText,
+      customAccessibilityText:
+        this.customAccessibilityText ??
+        (window.mtcaptchaConfig as any)?.customAccessibilityText,
+      customFonts: this.customFonts ?? (window.mtcaptchaConfig as any)?.customFonts,
       customStyle: this.customStyle ?? (window.mtcaptchaConfig as any)?.customStyle,
       theme: this.theme ?? (window.mtcaptchaConfig as any)?.theme ?? 'basic',
       action: this.action ?? (window.mtcaptchaConfig as any)?.action,
